@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'linebot',
     'rest_framework',
     'corsheaders',
+    'bot.apps.BotConfig',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# LINEシークレットとトークン
+LINE_CHANNEL_ACCESS_TOKEN = 'PFRDuYEY9IdZjXfJFyo+6DqQjxz/BkIuFB6UKLDborBNq80LabG+CtLr1BEuiJch7cXeaHH+DmG4bRMpghkFvjP2Wmo1N46yvpc3DamLecxq3hlZLDFDn4Jp6TNb6SJxp/0bwVhKEJzU5YiRJpW9hQdB04t89/1O/w1cDnyilFU='
+LINE_CHANNEL_SECRET = 'a05c4a397bad8a2651faca9c4fe18ba1'
