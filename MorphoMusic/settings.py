@@ -14,7 +14,7 @@ from pathlib import Path
 DEBUG = False
 
 try:
-    from .local_settings import * # noqa
+    from .local_settings import *  # noqa
 except ImportError:
     pass
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
+    'linebot',
     'rest_framework',
     'corsheaders',
 ]
