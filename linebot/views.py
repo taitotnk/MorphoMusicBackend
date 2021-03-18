@@ -2,7 +2,6 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 
 import requests
-import xml.etree.ElementTree as ET
 
 from linebot import (
     LineBotApi, WebhookHandler
