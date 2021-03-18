@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'linebot',
     'rest_framework',
     'corsheaders',
-    'bot.apps.BotConfig',
 ]
 
 MIDDLEWARE = [
