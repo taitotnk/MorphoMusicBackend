@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
-
+import json
 import requests
-
+import urllib
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -56,13 +56,27 @@ def handle_song_message(event):
             ]
         )
     else:
-        word_list = morpho_analysis(text)
+        word_lis = morpho_analysis(text)
+        for word in word_lis:
+            data = search_song(word)
+            for i in range(3):
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    [
+                        TextSendMessage(
+                            text="曲名：" + data[i]["title"] + "\n"
+                            "アーティスト名：" + data[i]["artist"] + "\n"
+                            "アルバム：" + data[i]["album"] + "\n"
+                            "URL:" + data[i]["url"] + "\n"
+                        ),
+                    ]
+                )
 
 
 GCP_API＿KEY = settings.GCP_API_KEY
 GCP_URL = "https://language.googleapis.com/v1/documents:analyzeSyntax?key=" + GCP_API＿KEY
 
-# 送信されたメッセージを形態素解析する関数
+# 送信されたメッセージを形態素解析して単語のリストを返す関数
 
 
 def morpho_analysis(text):
@@ -86,3 +100,59 @@ def morpho_analysis(text):
         if(len(word) >= 2):
             word_list += response["tokens"][i]["lemma"]
     return word_list
+
+# paramsをitunesAPIで使えるようにエンコードする関数
+
+
+def song_search_encode(data):
+    query = ""
+    for key, val in data.items():
+        # termに空白があったら+に置き換える
+        if key == "term":
+            val.replace(" ", "+")
+        query += key + "=" + val + "&"
+    query = query[0:-1]
+    return query
+
+# 曲のjsonデータを使いやすいようにパースする関数
+
+
+def song_parser(json_data):
+    lst_in = json_data.get("results")
+    lst_ret = []
+
+    for d in lst_in:
+        d_ret = {
+            "title": d.get("trackName"),
+            "artist": d.get("artistName"),
+            "album": d.get("collectionName"),
+            "url": urllib.parse.unquote(d.get("trackViewUrl")),
+            "id_track": d.get("trackId"),
+            "id_artist": d.get("artistId"),
+            "id_album": d.get("collectionId"),
+            "no_disk": d.get("discNumber"),
+            "no_track": d.get("trackNumber"),
+        }
+        lst_ret.append(d_ret)
+    return lst_ret
+
+# 曲を検索してjsonデータを返す関数
+
+
+def search_song(word):
+    ITUNES_URL = 'https://itunes.apple.com/search?'
+    params = {
+        "term": word,
+        "media": "music",
+        "entity": "song",
+        "attribute": "songTerm",
+        "country": "JP",
+        "lang": "ja_jp",  # "en_us",
+        "limit": "3",
+    }
+
+    ITUNES_URL = ITUNES_URL + song_search_encode(params)
+    res = requests.get(ITUNES_URL)
+    json_d = json.loads(res.text)
+    data = song_parser(json_d)
+    return data
