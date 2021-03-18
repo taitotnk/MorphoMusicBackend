@@ -59,7 +59,7 @@ def handle_song_message(event):
         word_list = morpho_analysis(text)
 
 
-GCP_API＿KEY = "AIzaSyCYoldfc45jmShnLyM0AD0pjxrwn8hJ8Fc"
+GCP_API＿KEY = settings.GCP_API_KEY
 GCP_URL = "https://language.googleapis.com/v1/documents:analyzeSyntax?key=" + GCP_API＿KEY
 
 # 送信されたメッセージを形態素解析する関数
