@@ -42,10 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
-    'linebot',
+    'bot',
     'rest_framework',
     'corsheaders',
-    'bot.apps.BotConfig',
 ]
 
 MIDDLEWARE = [
