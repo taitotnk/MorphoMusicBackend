@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 DEBUG = False
 
 try:
@@ -26,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$jvl!#0tdfq@+t&slba3^+$z%)v*^9h8(22^a&x2eiogg#b$$#'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 
 ALLOWED_HOSTS = []
@@ -129,5 +130,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # LINEシークレットとトークン
-LINE_CHANNEL_ACCESS_TOKEN = 'PFRDuYEY9IdZjXfJFyo+6DqQjxz/BkIuFB6UKLDborBNq80LabG+CtLr1BEuiJch7cXeaHH+DmG4bRMpghkFvjP2Wmo1N46yvpc3DamLecxq3hlZLDFDn4Jp6TNb6SJxp/0bwVhKEJzU5YiRJpW9hQdB04t89/1O/w1cDnyilFU='
-LINE_CHANNEL_SECRET = 'a05c4a397bad8a2651faca9c4fe18ba1'
+LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
+LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
+
+# googleAPIキー
+GCP_API_KEY = os.environ['GCP_API_KEY']
