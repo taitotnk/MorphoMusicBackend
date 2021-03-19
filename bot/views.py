@@ -46,6 +46,7 @@ def callback(request):
 def handle_song_message(event):
     # 送信されたメッセージ
     text = event.message.text
+    # 送信したユーザーのuserId
     user_id = event.source.userId
 
     # 送信されたメッセージが20文字より多い場合はエラー処理
@@ -62,12 +63,10 @@ def handle_song_message(event):
         for word in word_lis:
             data = search_song(word)
             for i in range(3):
-                # DBに格納
-                Lineuser_ins = Lineuser(user_id=user_id)
-                Song_ins = Song(
-                    song_name=data[i]["title"], artist_name=data[i]["artist"], artwork_url=data[i]["url"])
-                Lineuser_ins.save()
-                Song_ins.save()
+                # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
+                user_data = Lineuser.objects.get_or_create(user_id=user_id)
+                Song.objects.create(
+                    line_user=user_data, song_name=data[i]["title"], artist_name=data[i]["artist"], artwork_url=data[i]["url"])
 
                 # 検索結果を返信
                 line_bot_api.reply_message(
