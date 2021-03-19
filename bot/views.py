@@ -62,7 +62,7 @@ def handle_song_message(event):
         )
     else:
         word_lis = morpho_analysis(text)
-        user_data = Lineuser.objects.get_or_create(user_id=user_id)
+        user_data, _ = Lineuser.objects.get_or_create(user_id=user_id)
         for word in word_lis:
             data = search_song(word)
             for i in range(3):
