@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.views.decorators.http import require_GET
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 import requests
 import json
+from .models import Lineuser, Song
 
 
 @require_GET
@@ -17,14 +19,25 @@ def get_data(request):
         user_id = res_dict["sub"]
         print(user_id)
         data = {"status": "success"}
-        return JsonResponse(get_songs(data))
+        return JsonResponse(get_songs(data, user_id))
 
     elif result == "failed":
         res_dict = json.loads(res_body)
         return JsonResponse({"status": "failed", "description": res_dict["error_description"]})
 
 
-def get_songs(data):
+def get_songs(data, user_id):
+    user_data = get_object_or_404(Lineuser, user_id=user_id)
+    song_data = Song.objects.filter(
+        line_user=user_data).order_by("created_date")
+    datasets = []
+    dataset = {}
+    for item in song_data:
+        dataset["song_name"] = item.song_name
+        dataset["artist_name"] = item.artist_name
+        dataset["artwork_url"] = item.artwork_url
+        datasets.append(dataset)
+    data["songs"] = datasets
     return data
 
 

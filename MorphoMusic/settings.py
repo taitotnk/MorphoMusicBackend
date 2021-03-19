@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'bot',
-    'rest_framework',
     'corsheaders',
 ]
 
@@ -125,6 +124,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#
+CORS_ALLOWED_ORIGINS = [
+    "https://morphomusic.netlify.app",
+    "http://localhost:3000",
+    "https://localhost:3000",
+]
 
 if not DEBUG:
     SECRET_KEY = os.environ['SECRET_KEY']
