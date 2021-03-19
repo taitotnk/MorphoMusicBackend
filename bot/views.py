@@ -60,11 +60,11 @@ def handle_song_message(event):
         )
     else:
         word_lis = morpho_analysis(text)
+        user_data = Lineuser.objects.get_or_create(user_id=user_id)
         for word in word_lis:
             data = search_song(word)
             for i in range(3):
                 # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
-                user_data = Lineuser.objects.get_or_create(user_id=user_id)
                 Song.objects.create(
                     line_user=user_data, song_name=data[i]["title"], artist_name=data[i]["artist"], artwork_url=data[i]["url"])
 
