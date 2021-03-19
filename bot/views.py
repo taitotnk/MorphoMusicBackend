@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 import json
 import requests
 import urllib
+from api.models import Song, Lineuser
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -45,6 +46,8 @@ def callback(request):
 def handle_song_message(event):
     # 送信されたメッセージ
     text = event.message.text
+    # 送信したユーザーのuserId
+    user_id = event.source.userId
 
     # 送信されたメッセージが20文字より多い場合はエラー処理
     if len(text) > 20:
@@ -57,9 +60,15 @@ def handle_song_message(event):
         )
     else:
         word_lis = morpho_analysis(text)
+        user_data = Lineuser.objects.get_or_create(user_id=user_id)
         for word in word_lis:
             data = search_song(word)
             for i in range(3):
+                # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
+                Song.objects.create(
+                    line_user=user_data, song_name=data[i]["title"], artist_name=data[i]["artist"], artwork_url=data[i]["url"])
+
+                # 検索結果を返信
                 line_bot_api.reply_message(
                     event.reply_token,
                     [
