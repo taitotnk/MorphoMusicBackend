@@ -132,6 +132,8 @@ if not DEBUG:
     # LINEシークレットとトークン
     LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
     LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
+    
+    # LIFFチャンネルID
     LIFF_CHANNEL_ID = os.environ['LIFF_CHANNEL_ID']
 
     # googleAPIキー
