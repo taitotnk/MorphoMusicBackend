@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 import json
 import requests
 import urllib
+from django.views.decorators.csrf import csrf_exempt
 from api.models import Song, Lineuser
 from linebot import (
     LineBotApi, WebhookHandler
@@ -21,6 +22,7 @@ line_bot_api = LineBotApi(
 handler = WebhookHandler(channel_secret=settings.LINE_CHANNEL_SECRET)
 
 
+@csrf_exempt
 def callback(request):
     # ヘッダーから署名のための値抽出
     signature = request.META['HTTP_X_LINE_SIGNATURE']
@@ -47,7 +49,7 @@ def handle_song_message(event):
     # 送信されたメッセージ
     text = event.message.text
     # 送信したユーザーのuserId
-    user_id = event.source.userId
+    user_id = event.source.user_id
 
     # 送信されたメッセージが20文字より多い場合はエラー処理
     if len(text) > 20:
@@ -60,7 +62,7 @@ def handle_song_message(event):
         )
     else:
         word_lis = morpho_analysis(text)
-        user_data = Lineuser.objects.get_or_create(user_id=user_id)
+        user_data = Song.objects.get_or_create(user_id=user_id)
         for word in word_lis:
             data = search_song(word)
             for i in range(3):
