@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'bot',
-    'rest_framework',
     'corsheaders',
 ]
 
@@ -126,13 +125,20 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+#
+CORS_ALLOWED_ORIGINS = [
+    "https://morphomusic.netlify.app",
+    "http://localhost:3000",
+    "https://localhost:3000",
+]
+
 if not DEBUG:
     SECRET_KEY = os.environ['SECRET_KEY']
 
     # LINEシークレットとトークン
     LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
     LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
-    
+
     # LIFFチャンネルID
     LIFF_CHANNEL_ID = os.environ['LIFF_CHANNEL_ID']
 
