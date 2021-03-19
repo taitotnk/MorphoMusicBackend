@@ -26,9 +26,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY']
-
 
 ALLOWED_HOSTS = []
 
@@ -129,10 +126,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# LINEシークレットとトークン
-LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
-LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
-LIFF_CHANNEL_ID = os.environ['LIFF_CHANNEL_ID']
+if not DEBUG:
+    SECRET_KEY = os.environ['SECRET_KEY']
 
-# googleAPIキー
-GCP_API_KEY = os.environ['GCP_API_KEY']
+    # LINEシークレットとトークン
+    LINE_CHANNEL_ACCESS_TOKEN = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
+    LINE_CHANNEL_SECRET = os.environ['LINE_CHANNEL_SECRET']
+    LIFF_CHANNEL_ID = os.environ['LIFF_CHANNEL_ID']
+
+    # googleAPIキー
+    GCP_API_KEY = os.environ['GCP_API_KEY']
