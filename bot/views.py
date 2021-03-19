@@ -109,7 +109,7 @@ def morpho_analysis(text):
         word = response["tokens"][i]["lemma"]
         # 二文字以上の単語はリストに追加する
         if(len(word) >= 2):
-            word_list += response["tokens"][i]["lemma"]
+            word_list.append(response["tokens"][i]["lemma"])
     return word_list
 
 # paramsをitunesAPIで使えるようにエンコードする関数
