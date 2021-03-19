@@ -68,7 +68,7 @@ def handle_song_message(event):
             for i in range(3):
                 # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
                 Song.objects.create(
-                    line_user=user_data, song_name=data[i]["title"], artist_name=data[i]["artist"], artwork_url=data[i]["url"])
+                    line_user=user_data, song_name=data[i]["title"], artist_name=data[i]["artist"], buy_url=data[i]["url"], artwork_url="#")
 
                 # 検索結果を返信
                 line_bot_api.reply_message(
