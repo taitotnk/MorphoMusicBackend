@@ -34,6 +34,7 @@ def get_songs(data, user_id):
     datasets = []
     for item in song_data:
         dataset = {}
+        dataset["id"] = item.id
         dataset["song_name"] = item.song_name
         dataset["artist_name"] = item.artist_name
         dataset["buy_url"] = item.buy_url
