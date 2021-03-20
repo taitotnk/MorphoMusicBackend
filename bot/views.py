@@ -82,7 +82,7 @@ def handle_song_message(event):
             # 検索結果が0件だったら次のワードで検索
             if len(data) == 0:
                 continue
-
+            # 検索結果分ループを回す
             for i in range(len(data)):
                 # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
                 Song.objects.create(
