@@ -109,9 +109,9 @@ def handle_song_message(event):
                 artwork_url=song_info[i][0]["artwork"]
             ))
             msg_array.append(TextSendMessage(
-                text="曲名：" + song_info[i][0]["title"] + "\n"
-                "アーティスト名：" + song_info[i][0]["artist"] + "\n"
-                "URL：" + song_info[i][0]["url"] + "\n"
+                text="曲名: " + song_info[i][0]["title"] + "\n"
+                "アーティスト名: " + song_info[i][0]["artist"] + "\n"
+                "URL: " + song_info[i][0]["url"] + "\n"
             ))
         Song.objects.bulk_create(create_list)
 
