@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 import json
 import requests
 import urllib
+import re
 from django.views.decorators.csrf import csrf_exempt
 from api.models import Song, Lineuser
 from linebot import (
@@ -139,10 +140,15 @@ def morpho_analysis(text):
     response = requests.post(GCP_URL, headers=header, json=body).json()
     word_len = len(response["tokens"])
     word_list = []
+    # 漢字用パターン
+    kanji = re.compile(r'^[\u4E00-\u9FD0]+$')
     for i in range(word_len):
         word = response["tokens"][i]["lemma"]
         # 二文字以上の単語はリストに追加する
         if(len(word) >= 2):
+            word_list.append(response["tokens"][i]["lemma"])
+        # wordが漢字なら一文字でも追加
+        elif kanji.fullmatch(word):
             word_list.append(response["tokens"][i]["lemma"])
     return word_list
 
