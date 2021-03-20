@@ -30,12 +30,13 @@ def get_data(request):
 def get_songs(data, user_id):
     user_data = get_object_or_404(Lineuser, user_id=user_id)
     song_data = Song.objects.filter(
-        line_user=user_data).order_by("created_date")
+        line_user=user_data).order_by("-created_date")
     datasets = []
     for item in song_data:
         dataset = {}
         dataset["song_name"] = item.song_name
         dataset["artist_name"] = item.artist_name
+        dataset["buy_url"] = item.buy_url
         dataset["artwork_url"] = item.artwork_url
         datasets.append(dataset)
     data["songs"] = datasets
