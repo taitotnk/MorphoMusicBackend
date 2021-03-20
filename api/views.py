@@ -10,7 +10,8 @@ from .models import Lineuser, Song
 @require_GET
 def get_data(request):
     try:
-        res_body, result = verify(request.headers.get("Idtoken"))
+        auth_token = request.META.get('HTTP_AUTHORIZATION')
+        res_body, result = verify(auth_token.replace("Idtoken ", ""))
     except:  # noqa
         return JsonResponse({"status": "failed"})
 
