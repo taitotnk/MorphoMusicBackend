@@ -32,8 +32,8 @@ def get_songs(data, user_id):
     song_data = Song.objects.filter(
         line_user=user_data).order_by("created_date")
     datasets = []
-    dataset = {}
     for item in song_data:
+        dataset = {}
         dataset["song_name"] = item.song_name
         dataset["artist_name"] = item.artist_name
         dataset["artwork_url"] = item.artwork_url
