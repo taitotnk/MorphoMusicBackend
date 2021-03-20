@@ -65,7 +65,7 @@ def handle_song_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             [
-                TextSendMessage(text="こちらから履歴が見れます" + "\n"
+                TextSendMessage(text="こちらから履歴が見られます" + "\n"
                                 "URL: https://liff.line.me/1655768482-PVW85dOD")
             ]
         )
