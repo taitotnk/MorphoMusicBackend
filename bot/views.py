@@ -97,7 +97,7 @@ def handle_song_message(event):
                 song_name=song_info[i][0]["title"],
                 artist_name=song_info[i][0]["artist"],
                 buy_url=song_info[i][0]["url"],
-                artwork_url="#"
+                artwork_url=song_info[i][0]["artwork"]
             ))
             msg_array.append(TextSendMessage(
                 text="曲名：" + song_info[i][0]["title"] + "\n"
@@ -163,6 +163,7 @@ def song_parser(json_data):
             "title": d.get("trackName"),
             "artist": d.get("artistName"),
             "album": d.get("collectionName"),
+            "artwork": d.get("artworkUrl100"),
             "url": urllib.parse.unquote(d.get("trackViewUrl")),
             "id_track": d.get("trackId"),
             "id_artist": d.get("artistId"),
