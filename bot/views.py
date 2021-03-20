@@ -76,29 +76,38 @@ def handle_song_message(event):
             return
 
         user_data, _ = Lineuser.objects.get_or_create(user_id=user_id)
+
+        # 曲情報をまとめたリスト
+        song_info = []
+
         for word in word_lis:
             data = search_song(word)
 
             # 検索結果が0件だったら次のワードで検索
             if len(data) == 0:
                 continue
+            song_info.append(data)
 
-            # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
-            Song.objects.create(
-                line_user=user_data, song_name=data[0]["title"], artist_name=data[0]["artist"], buy_url=data[0]["url"], artwork_url="#")
+        # # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
+        create_list = []
+        msg_array = []
+        for i in range(len(song_info)):
+            create_list.append(Song(
+                line_user=user_data,
+                song_name=song_info[i][0]["title"],
+                artist_name=song_info[i][0]["artist"],
+                buy_url=song_info[i][0]["url"],
+                artwork_url="#"
+            ))
+            msg_array.append(TextSendMessage(
+                text="曲名：" + song_info[i][0]["title"] + "\n"
+                "アーティスト名：" + song_info[i][0]["artist"] + "\n"
+                "URL：" + song_info[i][0]["url"] + "\n"
+            ))
+        Song.objects.bulk_create(create_list)
 
-            # 検索結果を返信
-            line_bot_api.reply_message(
-                event.reply_token,
-                [
-                    TextSendMessage(
-                        text="曲名：" + data[0]["title"] + "\n"
-                        "アーティスト名：" + data[0]["artist"] + "\n"
-                        "アルバム：" + data[0]["album"] + "\n"
-                        "URL:" + data[0]["url"] + "\n"
-                    ),
-                ]
-            )
+        # 検索結果を返信
+        line_bot_api.reply_message(event.reply_token, msg_array)
 
 
 GCP_API＿KEY = settings.GCP_API_KEY
