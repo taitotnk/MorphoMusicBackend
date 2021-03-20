@@ -60,6 +60,14 @@ def handle_song_message(event):
                 StickerSendMessage(package_id="11537", sticker_id="52002739")
             ]
         )
+    elif text == "履歴":
+        line_bot_api.reply_message(
+            event.reply_token,
+            [
+                TextSendMessage(text="こちらから履歴が見れます" + "\n"
+                                "URL: https://liff.line.me/1655768482-PVW85dOD")
+            ]
+        )
     else:
         word_lis = morpho_analysis(text)
         # 形態素解析したリストの中身が空だったらエラー処理して返す
