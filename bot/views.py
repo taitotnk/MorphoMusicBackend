@@ -62,26 +62,43 @@ def handle_song_message(event):
         )
     else:
         word_lis = morpho_analysis(text)
+        # 形態素解析したリストの中身が空だったらエラー処理して返す
+        if len(word_lis) == 0:
+            print("error:analysis result is empty")
+            line_bot_api.reply_message(
+                event.reply_token,
+                [
+                    TextSendMessage(
+                        text="もう少し長い文章でメッセージを送ってください。\n例：今日の天気はいいですね。"
+                    ),
+                ]
+            )
+            return
+
         user_data, _ = Lineuser.objects.get_or_create(user_id=user_id)
         for word in word_lis:
             data = search_song(word)
-            for i in range(3):
-                # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
-                Song.objects.create(
-                    line_user=user_data, song_name=data[i]["title"], artist_name=data[i]["artist"], buy_url=data[i]["url"], artwork_url="#")
 
-                # 検索結果を返信
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    [
-                        TextSendMessage(
-                            text="曲名：" + data[i]["title"] + "\n"
-                            "アーティスト名：" + data[i]["artist"] + "\n"
-                            "アルバム：" + data[i]["album"] + "\n"
-                            "URL:" + data[i]["url"] + "\n"
-                        ),
-                    ]
-                )
+            # 検索結果が0件だったら次のワードで検索
+            if len(data) == 0:
+                continue
+
+            # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
+            Song.objects.create(
+                line_user=user_data, song_name=data[0]["title"], artist_name=data[0]["artist"], buy_url=data[0]["url"], artwork_url="#")
+
+            # 検索結果を返信
+            line_bot_api.reply_message(
+                event.reply_token,
+                [
+                    TextSendMessage(
+                        text="曲名：" + data[0]["title"] + "\n"
+                        "アーティスト名：" + data[0]["artist"] + "\n"
+                        "アルバム：" + data[0]["album"] + "\n"
+                        "URL:" + data[0]["url"] + "\n"
+                    ),
+                ]
+            )
 
 
 GCP_API＿KEY = settings.GCP_API_KEY
@@ -159,7 +176,7 @@ def search_song(word):
         "attribute": "songTerm",
         "country": "JP",
         "lang": "ja_jp",  # "en_us",
-        "limit": "3",
+        "limit": "1",
     }
 
     ITUNES_URL = ITUNES_URL + song_search_encode(params)
