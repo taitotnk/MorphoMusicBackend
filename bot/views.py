@@ -75,14 +75,24 @@ def handle_song_message(event):
         )
     elif text == "停止":
         Lineuser_obj = Lineuser.objects.get(user_id=user_id)
-        Lineuser_obj.stop = True
-        Lineuser_obj.save()
-        line_bot_api.reply_message(
-            event.reply_token,
-            [
-                TextSendMessage(text="bot返信機能を停止しました。")
-            ]
-        )
+        # すでに停止状態
+        if Lineuser_obj.stop is True:
+            line_bot_api.reply_message(
+                event.reply_token,
+                [
+                    TextSendMessage(text="既にbotは停止状態です。")
+                ]
+            )
+        # 停止されていなければ停止状態に更新する
+        else:
+            Lineuser_obj.stop = True
+            Lineuser_obj.save()
+            line_bot_api.reply_message(
+                event.reply_token,
+                [
+                    TextSendMessage(text="bot返信機能を停止しました。")
+                ]
+            )
     elif text == "解除":
         Lineuser_obj = Lineuser.objects.get(user_id=user_id)
         # 停止されていれば解除する
