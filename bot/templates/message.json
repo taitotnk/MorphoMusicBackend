@@ -25,12 +25,6 @@
             },
             {
                 "type": "text",
-                "text": "アーティスト",
-                "align": "center",
-                "margin": "xxl"
-            },
-            {
-                "type": "text",
                 "text": "{{ artist }}",
                 "align": "center"
             }
@@ -43,12 +37,12 @@
         "contents": [
             {
                 "type": "button",
-                "style": "link",
+                "style": "primary",
                 "height": "sm",
                 "action": {
                     "type": "uri",
-                    "label": "WEBSITE",
-                    "uri": "https://linecorp.com"
+                    "label": "URL",
+                    "uri": "{{ url }}"
                 }
             },
             {

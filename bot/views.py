@@ -118,7 +118,7 @@ def handle_song_message(event):
                                  "title": title, "artist": artist, "url": url}
             )
             msg_array.append(FlexSendMessage(
-                alt_text="タイトル：" + title + "アーティスト：" + artist + "URL：" + url, contents=BubbleContainer.new_from_json_dict(json.loads(msg))))
+                alt_text="タイトル：" + title + "アーティスト：" + artist, contents=BubbleContainer.new_from_json_dict(json.loads(msg))))
         Song.objects.bulk_create(create_list)
 
         # 検索結果を返信
