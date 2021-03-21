@@ -69,6 +69,26 @@ def handle_song_message(event):
                                 "URL: https://liff.line.me/1655768482-PVW85dOD")
             ]
         )
+    elif text == "停止":
+        Lineuser_obj = Lineuser.objects.get(user_id=user_id)
+        Lineuser_obj.stop = True
+        Lineuser_obj.save()
+        line_bot_api.reply_message(
+            event.reply_token,
+            [
+                TextSendMessage(text="bot返信機能を停止しました。")
+            ]
+        )
+    elif text == "解除":
+        Lineuser_obj = Lineuser.objects.get(user_id=user_id)
+        Lineuser_obj.stop = False
+        Lineuser_obj.save()
+        line_bot_api.reply_message(
+            event.reply_token,
+            [
+                TextSendMessage(text="bot返信機能の停止を解除しました。")
+            ]
+        )
     else:
         word_lis = morpho_analysis(text)
         # 形態素解析したリストの中身が空だったらエラー処理して返す
@@ -115,8 +135,10 @@ def handle_song_message(event):
             ))
         Song.objects.bulk_create(create_list)
 
-        # 検索結果を返信
-        line_bot_api.reply_message(event.reply_token, msg_array)
+        # userのstopカラムがFalseだったら返信をする
+        if user_data.stop is False:
+            # 検索結果を返信
+            line_bot_api.reply_message(event.reply_token, msg_array)
 
 
 GCP_API＿KEY = settings.GCP_API_KEY
