@@ -119,7 +119,22 @@ def handle_song_message(event):
             )
             print(msg)
             msg_array.append(FlexSendMessage(
-                alt_text="test", contents=BubbleContainer.new_from_json_dict(json.loads(msg))
+                alt_text="test", contents={"type": "bubble",
+                                           "body": {
+                                               "type": "box",
+                                               "layout": "horizontal",
+                                               "contents": [
+                                                   {
+                                                       "type": "text",
+                                                       "text": "Hello,"
+                                                   },
+                                                   {
+                                                       "type": "text",
+                                                       "text": "World!"
+                                                   }
+                                               ]
+                                           }
+                                           }
             ))
         Song.objects.bulk_create(create_list)
 
