@@ -117,10 +117,11 @@ def handle_song_message(event):
                 "message.json", {"artwork": artwork,
                                  "title": title, "artist": artist, "url": url}
             )
-            print(msg)
             msg_array.append(FlexSendMessage(
                 alt_text="タイトル：" + title + "アーティスト：" + artist, contents=BubbleContainer.new_from_json_dict(json.loads(msg))))
         Song.objects.bulk_create(create_list)
+
+        print(msg_array)
 
         # 検索結果を返信
         line_bot_api.reply_message(event.reply_token, msg_array)
