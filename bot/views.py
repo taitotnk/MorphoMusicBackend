@@ -119,7 +119,57 @@ def handle_song_message(event):
             )
             print(json.loads(msg))
             msg_array.append(FlexSendMessage(
-                alt_text="test", contents=json.loads(msg)
+                alt_text="test",
+                contents={
+                    'type': 'bubble',
+                    'hero': {
+                        'type': 'image',
+                        'url': 'https://is3-ssl.mzstatic.com/image/thumb/Music128/v4/bf/b6/3a/bfb63ad9-36a7-99a7-ab40-c8a4c1efb91d/source/100x100bb.jpg',
+                        'size': 'full',
+                        'aspectRatio': '20:13',
+                        'aspectMode': 'cover'
+                    },
+                    'body': {
+                        'type': 'box',
+                        'layout': 'vertical',
+                        'contents': [
+                            {
+                                'type': 'text',
+                                'text': 'こんにちは',
+                                'weight': 'bold',
+                                'size': 'xl',
+                                'align': 'center',
+                                'margin': 'none'
+                            },
+                            {
+                                'type': 'text',
+                                'text': 'スピッツ',
+                                'align': 'center'
+                            }
+                        ]
+                    }, 'footer': {
+                        'type': 'box',
+                        'layout': 'vertical',
+                        'spacing': 'sm',
+                        'contents': [
+                            {
+                                'type': 'button',
+                                'style': 'primary',
+                                'height': 'sm',
+                                'action': {
+                                    'type': 'uri',
+                                    'label': 'URL',
+                                    'uri': 'https://music.apple.com/jp/album/こんにちは/1440793037?i=1440793289&amp;uo=4'
+                                }
+                            },
+                            {
+                                'type': 'spacer',
+                                'size': 'sm'
+                            }
+                        ],
+                        'flex': 0
+                    }
+                }
             ))
         Song.objects.bulk_create(create_list)
 
