@@ -5,6 +5,7 @@ import requests
 import urllib
 import re
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 from api.models import Song, Lineuser
 from linebot import (
     LineBotApi, WebhookHandler
@@ -13,7 +14,7 @@ from linebot.exceptions import (
     InvalidSignatureError, LineBotApiError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, StickerSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, StickerSendMessage, FlexSendMessage, BubbleContainer
 )
 
 
@@ -108,11 +109,16 @@ def handle_song_message(event):
                 buy_url=song_info[i][0]["url"],
                 artwork_url=song_info[i][0]["artwork"]
             ))
-            msg_array.append(TextSendMessage(
-                text="曲名: " + song_info[i][0]["title"] + "\n"
-                "アーティスト名: " + song_info[i][0]["artist"] + "\n"
-                "URL: " + song_info[i][0]["url"] + "\n"
-            ))
+            artwork = song_info[i][0]["artwork"]
+            title = song_info[i][0]["title"]
+            artist = song_info[i][0]["artist"]
+            url = song_info[i][0]["url"]
+            msg = render_to_string(
+                "message.json", {"artwork": artwork,
+                                 "title": title, "artist": artist, "url": url}
+            )
+            msg_array.append(FlexSendMessage(
+                alt_text="タイトル：" + title + "アーティスト：" + artist, contents=BubbleContainer.new_from_json_dict(json.loads(msg))))
         Song.objects.bulk_create(create_list)
 
         # 検索結果を返信
