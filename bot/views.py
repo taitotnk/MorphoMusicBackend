@@ -54,13 +54,17 @@ def handle_song_message(event):
 
     # 送信されたメッセージが20文字より多い場合はエラー処理
     if len(text) > 20:
-        line_bot_api.reply_message(
-            event.reply_token,
-            [
-                TextSendMessage(text="20文字以下のメッセージを送ってください"),
-                StickerSendMessage(package_id="11537", sticker_id="52002739")
-            ]
-        )
+        Lineuser_obj = Lineuser.objects.get(user_id=user_id)
+        # 停止されていれば20文字以上のメッセージを送信できる
+        if Lineuser_obj.stop is False:
+            line_bot_api.reply_message(
+                event.reply_token,
+                [
+                    TextSendMessage(text="20文字以下のメッセージを送ってください"),
+                    StickerSendMessage(package_id="11537",
+                                       sticker_id="52002739")
+                ]
+            )
     elif text == "履歴":
         line_bot_api.reply_message(
             event.reply_token,
@@ -81,14 +85,24 @@ def handle_song_message(event):
         )
     elif text == "解除":
         Lineuser_obj = Lineuser.objects.get(user_id=user_id)
-        Lineuser_obj.stop = False
-        Lineuser_obj.save()
-        line_bot_api.reply_message(
-            event.reply_token,
-            [
-                TextSendMessage(text="bot返信機能の停止を解除しました。")
-            ]
-        )
+        # 停止されていれば解除する
+        if Lineuser_obj.stop is True:
+            Lineuser_obj.stop = False
+            Lineuser_obj.save()
+            line_bot_api.reply_message(
+                event.reply_token,
+                [
+                    TextSendMessage(text="bot返信機能の停止を解除しました。")
+                ]
+            )
+        # 停止されていなければそのまま
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                [
+                    TextSendMessage(text="停止していないので解除状態です。")
+                ]
+            )
     else:
         word_lis = morpho_analysis(text)
         # 形態素解析したリストの中身が空だったらエラー処理して返す
