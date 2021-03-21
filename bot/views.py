@@ -117,7 +117,7 @@ def handle_song_message(event):
                 "message.json", {"artwork": artwork,
                                  "title": title, "artist": artist, "url": url}
             )
-            print(type(json.loads(msg)))
+            print(json.loads(msg))
             msg_array.append(FlexSendMessage(
                 alt_text="test", contents=json.loads(msg)
             ))
