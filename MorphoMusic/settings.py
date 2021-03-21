@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
-DEBUG = False
+DEBUG = True
 
 try:
     from .local_settings import *  # noqa
@@ -121,7 +121,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://localhost:3000",
 ]
 
-if not DEBUG:
+if DEBUG:
     import psycopg2
     import dj_database_url
     import django_heroku
