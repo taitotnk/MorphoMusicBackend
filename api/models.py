@@ -4,6 +4,7 @@ import datetime
 
 class Lineuser(models.Model):
     user_id = models.CharField(max_length=256)
+    stop = models.BooleanField(default=False)
 
 
 class Song(models.Model):
