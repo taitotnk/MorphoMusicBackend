@@ -38,7 +38,7 @@
         "action": {
           "type": "uri",
           "label": "URL",
-          "uri": "{{ url|safe }}"
+          "uri": "{{ url|safe|urlencode:":/?=" }}"
         },
         "style": "primary",
         "height": "sm"
