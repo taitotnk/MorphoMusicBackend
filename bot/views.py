@@ -5,6 +5,7 @@ import requests
 import urllib
 import re
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 from api.models import Song, Lineuser
 from linebot import (
     LineBotApi, WebhookHandler
@@ -13,7 +14,7 @@ from linebot.exceptions import (
     InvalidSignatureError, LineBotApiError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, StickerSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, StickerSendMessage, FlexSendMessage
 )
 
 
@@ -152,17 +153,23 @@ def handle_song_message(event):
                 buy_url=song_info[i][0]["url"],
                 artwork_url=song_info[i][0]["artwork"]
             ))
-            msg_array.append(TextSendMessage(
-                text="曲名: " + song_info[i][0]["title"] + "\n"
-                "アーティスト名: " + song_info[i][0]["artist"] + "\n"
-                "URL: " + song_info[i][0]["url"] + "\n"
+            artwork = song_info[i][0]["artwork"]
+            title = song_info[i][0]["title"]
+            artist = song_info[i][0]["artist"]
+            url = song_info[i][0]["url"]
+            msg = render_to_string(
+                "message.json", {"artwork": artwork,
+                                 "title": title, "artist": artist, "url": url}
+            )
+            msg_array.append(FlexSendMessage(
+                alt_text="曲名：" + title,
+                contents=json.loads(msg)
             ))
+
         Song.objects.bulk_create(create_list)
 
-        # userのstopカラムがFalseだったら返信をする
-        if user_data.stop is False:
-            # 検索結果を返信
-            line_bot_api.reply_message(event.reply_token, msg_array)
+        # 検索結果を返信
+        line_bot_api.reply_message(event.reply_token, msg_array)
 
 
 GCP_API＿KEY = settings.GCP_API_KEY
