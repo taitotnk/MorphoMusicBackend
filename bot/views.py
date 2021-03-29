@@ -146,17 +146,17 @@ def handle_song_message(event):
         create_list = []
         msg_array = []
         for i in range(len(song_info)):
-            create_list.append(Song(
-                line_user=user_data,
-                song_name=song_info[i][0]["title"],
-                artist_name=song_info[i][0]["artist"],
-                buy_url=song_info[i][0]["url"],
-                artwork_url=song_info[i][0]["artwork"]
-            ))
             artwork = song_info[i][0]["artwork"]
             title = song_info[i][0]["title"]
             artist = song_info[i][0]["artist"]
             url = song_info[i][0]["url"]
+            create_list.append(Song(
+                line_user=user_data,
+                song_name=title,
+                artist_name=artist,
+                buy_url=url,
+                artwork_url=artwork
+            ))
             msg = render_to_string(
                 "message.json", {"artwork": artwork,
                                  "title": title, "artist": artist, "url": url}
