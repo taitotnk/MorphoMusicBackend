@@ -141,7 +141,17 @@ def handle_song_message(event):
                 continue
             song_info.append(data)
 
-        # # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
+        # 曲情報が空だった場合は見つからない返信をする
+        if len(song_info) == 0:
+            line_bot_api.reply_message(
+                event.reply_token,
+                [
+                    TextSendMessage(text="この文章では曲が見つかりませんでした。\n他の文章でお試しください。")
+                ]
+            )
+            return
+
+        # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
         create_list = []
         msg_array = []
         for i in range(len(song_info)):
