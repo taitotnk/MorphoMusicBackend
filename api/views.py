@@ -48,8 +48,11 @@ def verify(token):
     # LINE IDトークンの検証
     url = "https://api.line.me/oauth2/v2.1/verify"
     payload = {"id_token": token, "client_id": str(settings.LIFF_CHANNEL_ID)}
-    response = requests.post(url, data=payload, timeout=10.0)
-    if response.status_code == 200:
-        return response.text, "success"
-    else:
-        return response.text, "failed"
+    try:
+        response = requests.post(url, data=payload, timeout=10.0)
+        if response.status_code == 200:
+            return response.text, "success"
+        else:
+            return response.text, "failed"
+    except requests.exceptions.ConnectTimeout:
+        return '{"error": "connection_timeout", "error_description": "LINE SDK Connection Timeout"}'
