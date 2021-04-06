@@ -55,4 +55,4 @@ def verify(token):
         else:
             return response.text, "failed"
     except requests.exceptions.ConnectTimeout:
-        return '{"error": "connection_timeout", "error_description": "LINE SDK Connection Timeout"}'
+        return '{"error": "connection_timeout", "error_description": "LINE SDK Connection Timeout"}', "failed"
