@@ -127,6 +127,18 @@ def handle_song_message(event):
                 ]
             )
             return
+        # timeoutしたらエラー処理
+        if word_lis == "requests.exceptions.Timeout":
+            print("error:timeout")
+            line_bot_api.reply_message(
+                event.reply_token,
+                [
+                    TextSendMessage(
+                        text="サーバー側に問題があるようです。\n復旧するまでお待ちください。\n"
+                    ),
+                ]
+            )
+            return
 
         user_data, _ = Lineuser.objects.get_or_create(user_id=user_id)
 
@@ -135,6 +147,18 @@ def handle_song_message(event):
 
         for word in word_lis:
             data = search_song(word)
+            # timeoutしたらエラー処理
+            if data == "requests.exceptions.Timeout":
+                print("error:timeout")
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    [
+                        TextSendMessage(
+                            text="サーバー側に問題があるようです。\n復旧するまでお待ちください。\n"
+                        ),
+                    ]
+                )
+                return
 
             # 検索結果が0件だったら次のワードで検索
             if len(data) == 0:
@@ -192,8 +216,15 @@ def morpho_analysis(text):
         "encodingType": "UTF8"
     }
 
-    # json形式で結果を受け取る
-    response = requests.post(GCP_URL, headers=header, json=body).json()
+    # connect, read timeoutを10秒に設定
+    try:
+        # json形式で結果を受け取る
+        response = requests.post(GCP_URL, headers=header,
+                                 json=body, timeout=10.0).json()
+    # timeoutならエラー処理
+    except requests.exceptions.ConnectTimeout:
+        return "requests.exceptions.Timeout"
+
     word_len = len(response["tokens"])
     word_list = []
     # 漢字用パターン
@@ -260,7 +291,15 @@ def search_song(word):
     }
 
     ITUNES_URL = ITUNES_URL + song_search_encode(params)
-    res = requests.get(ITUNES_URL)
+
+    # connect, read timeoutを10秒に設定
+    try:
+        res = requests.get(ITUNES_URL, timeout=10.0)
+
+    # timeoutならエラー処理
+    except requests.exceptions.ConnectTimeout:
+        return "requests.exceptions.Timeout"
+
     json_d = json.loads(res.text)
     data = song_parser(json_d)
     return data
