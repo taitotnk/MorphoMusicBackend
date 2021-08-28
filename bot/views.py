@@ -187,7 +187,8 @@ def handle_song_message(event):
         # userのstopカラムがFalseだったら返信をする
         if user_data.stop is False:
             # 検索結果を返信
-            line_bot_api.reply_message(event.reply_token, msg_array)
+            line_bot_api.reply_message(
+                event.reply_token, msg_array,  timeout=None)
 
 
 # GCP APIキー
