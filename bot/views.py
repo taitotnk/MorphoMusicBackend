@@ -270,6 +270,5 @@ def search_song(word):
     # 曲が1件も見つからなかったら空リストを返す
     if results['tracks']['items'] == []:
         return []
-    else:
-        data = song_parser(results)
+    data = song_parser(results)
     return data
