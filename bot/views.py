@@ -2,6 +2,8 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 import json
 import requests
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 import urllib
 import re
 from django.views.decorators.csrf import csrf_exempt
@@ -147,19 +149,6 @@ def handle_song_message(event):
 
         for word in word_lis:
             data = search_song(word)
-            # timeoutしたらエラー処理
-            if data == "requests.exceptions.Timeout":
-                print("error:timeout")
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    [
-                        TextSendMessage(
-                            text="サーバー側に問題があるようです。\n復旧するまでお待ちください。\n"
-                        ),
-                    ]
-                )
-                return
-
             # 検索結果が0件だったら次のワードで検索
             if len(data) == 0:
                 continue
@@ -174,33 +163,47 @@ def handle_song_message(event):
                 ]
             )
             return
-
         # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
         create_list = []
         msg_array = []
         for i in range(len(song_info)):
-            create_list.append(Song(
-                line_user=user_data,
-                song_name=song_info[i][0]["title"],
-                artist_name=song_info[i][0]["artist"],
-                buy_url=song_info[i][0]["url"],
-                artwork_url=song_info[i][0]["artwork"]
-            ))
-            msg_array.append(TextSendMessage(
-                text="曲名: " + song_info[i][0]["title"] + "\n"
-                "アーティスト名: " + song_info[i][0]["artist"] + "\n"
-                "URL: " + song_info[i][0]["url"] + "\n"
-            ))
+            for j in range(len(song_info[i])):
+                create_list.append(Song(
+                    line_user=user_data,
+                    song_name=song_info[i][j]["title"],
+                    artist_name=song_info[i][j]["artist"],
+                    buy_url=song_info[i][j]["url"],
+                    artwork_url=song_info[i][j]["artwork"]
+                ))
+                msg_array.append(TextSendMessage(
+                    text="曲名: " + song_info[i][j]["title"] + "\n"
+                    "アーティスト名: " + song_info[i][j]["artist"] + "\n"
+                    "URL: " + song_info[i][j]["url"] + "\n"
+                ))
         Song.objects.bulk_create(create_list)
 
         # userのstopカラムがFalseだったら返信をする
         if user_data.stop is False:
             # 検索結果を返信
-            line_bot_api.reply_message(event.reply_token, msg_array)
+            try:
+                line_bot_api.reply_message(
+                    event.reply_token, msg_array)
+            except LineBotApiError as e:
+                print(e)
+                line_bot_api.reply_message(
+                    event.reply_token, [
+                        TextSendMessage(
+                            text="検索曲数が多いので、返信できませんでした。\nお手数ですが、「履歴」と返信し検索結果を確認してください。\n")
+                    ])
 
 
+# GCP APIキー
 GCP_API＿KEY = settings.GCP_API_KEY
 GCP_URL = "https://language.googleapis.com/v1/documents:analyzeSyntax?key=" + GCP_API＿KEY
+
+# Spotify APIキー
+SPOTIFY_CLIENT_ID = settings.SPOTIFY_CLIENT_ID
+SPOTIFY_CLIENT_SECRET = settings.SPOTIFY_CLIENT_SECRET
 
 # 送信されたメッセージを形態素解析して単語のリストを返す関数
 
@@ -239,38 +242,17 @@ def morpho_analysis(text):
             word_list.append(response["tokens"][i]["lemma"])
     return word_list
 
-# paramsをitunesAPIで使えるようにエンコードする関数
-
-
-def song_search_encode(data):
-    query = ""
-    for key, val in data.items():
-        # termに空白があったら+に置き換える
-        if key == "term":
-            val.replace(" ", "+")
-        query += key + "=" + val + "&"
-    query = query[0:-1]
-    return query
 
 # 曲のjsonデータを使いやすいようにパースする関数
-
-
 def song_parser(json_data):
-    lst_in = json_data.get("results")
     lst_ret = []
 
-    for d in lst_in:
+    for track in json_data['tracks']['items']:
         d_ret = {
-            "title": d.get("trackName"),
-            "artist": d.get("artistName"),
-            "album": d.get("collectionName"),
-            "artwork": d.get("artworkUrl100"),
-            "url": urllib.parse.unquote(d.get("trackViewUrl")),
-            "id_track": d.get("trackId"),
-            "id_artist": d.get("artistId"),
-            "id_album": d.get("collectionId"),
-            "no_disk": d.get("discNumber"),
-            "no_track": d.get("trackNumber"),
+            "title": track['name'],
+            "artist": track['album']['artists'][0]['name'],
+            "artwork": track['album']['images'][1]['url'],
+            "url": urllib.parse.unquote(track['external_urls']['spotify']),
         }
         lst_ret.append(d_ret)
     return lst_ret
@@ -279,27 +261,14 @@ def song_parser(json_data):
 
 
 def search_song(word):
-    ITUNES_URL = 'https://itunes.apple.com/search?'
-    params = {
-        "term": word,
-        "media": "music",
-        "entity": "song",
-        "attribute": "songTerm",
-        "country": "JP",
-        "lang": "ja_jp",  # "en_us",
-        "limit": "1",
-    }
-
-    ITUNES_URL = ITUNES_URL + song_search_encode(params)
-
-    # connect, read timeoutを10秒に設定
-    try:
-        res = requests.get(ITUNES_URL, timeout=10.0)
-
-    # timeoutならエラー処理
-    except requests.exceptions.ConnectTimeout:
-        return "requests.exceptions.Timeout"
-
-    json_d = json.loads(res.text)
-    data = song_parser(json_d)
+    client_credentials_manager = spotipy.oauth2.SpotifyClientCredentials(
+        SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
+    spotify = spotipy.Spotify(
+        client_credentials_manager=client_credentials_manager)
+    results = spotify.search(q='track:' + word, limit=1,
+                             offset=0, type='track', market=None)
+    # 曲が1件も見つからなかったら空リストを返す
+    if results['tracks']['items'] == []:
+        return []
+    data = song_parser(results)
     return data

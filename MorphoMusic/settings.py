@@ -148,3 +148,7 @@ if not DEBUG:
 
     # googleAPIキー
     GCP_API_KEY = os.environ['GCP_API_KEY']
+
+    # SpotifyAPIキー
+    SPOTIFY_CLIENT_ID = os.environ['SPOTIFY_CLIENT_ID']
+    SPOTIFY_CLIENT_SECRET = os.environ['SPOTIFY_CLIENT_SECRET']
