@@ -164,7 +164,7 @@ def handle_song_message(event):
             )
             return
         print(song_info)
-
+        print("Debug:" + str(len(song_info)))
         # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
         create_list = []
         msg_array = []
