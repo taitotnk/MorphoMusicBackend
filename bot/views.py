@@ -182,6 +182,7 @@ def handle_song_message(event):
                 ))
         print(create_list)
         Song.objects.bulk_create(create_list)
+        print(msg_array)
 
         # userのstopカラムがFalseだったら返信をする
         if user_data.stop is False:
