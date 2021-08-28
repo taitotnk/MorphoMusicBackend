@@ -153,7 +153,7 @@ def handle_song_message(event):
             if len(data) == 0:
                 continue
             song_info.append(data)
-
+        print(song_info)
         # 曲情報が空だった場合は見つからない返信をする
         if len(song_info) == 0:
             line_bot_api.reply_message(
@@ -263,5 +263,4 @@ def search_song(word):
         return []
     else:
         data = song_parser(results)
-    print(data)
     return data
