@@ -192,6 +192,11 @@ def handle_song_message(event):
                     event.reply_token, msg_array)
             except LineBotApiError as e:
                 print(e)
+                line_bot_api.reply_message(
+                    event.reply_token, [
+                        TextSendMessage(
+                            text="検索曲数が多いので、返信できませんでした。\nお手数ですが、「履歴」と返信し検索結果を確認してください。\n")
+                    ])
 
 
 # GCP APIキー
@@ -262,7 +267,7 @@ def search_song(word):
         SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
     spotify = spotipy.Spotify(
         client_credentials_manager=client_credentials_manager)
-    results = spotify.search(q='track:' + word, limit=2,
+    results = spotify.search(q='track:' + word, limit=1,
                              offset=0, type='track', market=None)
     # 曲が1件も見つからなかったら空リストを返す
     if results['tracks']['items'] == []:
