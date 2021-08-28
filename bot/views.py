@@ -163,6 +163,7 @@ def handle_song_message(event):
                 ]
             )
             return
+        print(song_info)
 
         # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
         create_list = []
@@ -180,7 +181,6 @@ def handle_song_message(event):
                 "アーティスト名: " + song_info[i][0]["artist"] + "\n"
                 "URL: " + song_info[i][0]["url"] + "\n"
             ))
-        print(create_list)
         Song.objects.bulk_create(create_list)
 
         # userのstopカラムがFalseだったら返信をする
