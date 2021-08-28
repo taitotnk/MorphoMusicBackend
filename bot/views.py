@@ -246,7 +246,6 @@ def song_parser(json_data):
             "url": urllib.parse.unquote(track['external_urls']['spotify']),
         }
         lst_ret.append(d_ret)
-    print(lst_ret)
     return lst_ret
 
 # 曲を検索してjsonデータを返す関数
@@ -264,4 +263,5 @@ def search_song(word):
         return []
     else:
         data = song_parser(results)
+    print(data)
     return data
