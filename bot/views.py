@@ -153,7 +153,7 @@ def handle_song_message(event):
             if len(data) == 0:
                 continue
             song_info.append(data)
-        print(song_info)
+
         # 曲情報が空だった場合は見つからない返信をする
         if len(song_info) == 0:
             line_bot_api.reply_message(
@@ -180,6 +180,7 @@ def handle_song_message(event):
                 "アーティスト名: " + song_info[i][0]["artist"] + "\n"
                 "URL: " + song_info[i][0]["url"] + "\n"
             ))
+        print(create_list)
         Song.objects.bulk_create(create_list)
 
         # userのstopカラムがFalseだったら返信をする
