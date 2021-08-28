@@ -191,7 +191,7 @@ def handle_song_message(event):
                 line_bot_api.reply_message(
                     event.reply_token, msg_array)
             except LineBotApiError as e:
-                print(e.message)
+                print(e)
 
 
 # GCP APIキー
