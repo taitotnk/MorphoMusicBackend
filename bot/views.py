@@ -258,7 +258,7 @@ def search_song(word):
         SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
     spotify = spotipy.Spotify(
         client_credentials_manager=client_credentials_manager)
-    results = spotify.search(q='track:' + word, limit=1,
+    results = spotify.search(q='track:' + word, limit=2,
                              offset=0, type='track', market=None)
     # 曲が1件も見つからなかったら空リストを返す
     if results['tracks']['items'] == []:
