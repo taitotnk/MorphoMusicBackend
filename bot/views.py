@@ -169,18 +169,19 @@ def handle_song_message(event):
         create_list = []
         msg_array = []
         for i in range(len(song_info)):
-            create_list.append(Song(
-                line_user=user_data,
-                song_name=song_info[i][0]["title"],
-                artist_name=song_info[i][0]["artist"],
-                buy_url=song_info[i][0]["url"],
-                artwork_url=song_info[i][0]["artwork"]
-            ))
-            msg_array.append(TextSendMessage(
-                text="曲名: " + song_info[i][0]["title"] + "\n"
-                "アーティスト名: " + song_info[i][0]["artist"] + "\n"
-                "URL: " + song_info[i][0]["url"] + "\n"
-            ))
+            for j in range(len(song_info[i])):
+                create_list.append(Song(
+                    line_user=user_data,
+                    song_name=song_info[i][j]["title"],
+                    artist_name=song_info[i][j]["artist"],
+                    buy_url=song_info[i][j]["url"],
+                    artwork_url=song_info[i][j]["artwork"]
+                ))
+                msg_array.append(TextSendMessage(
+                    text="曲名: " + song_info[i][j]["title"] + "\n"
+                    "アーティスト名: " + song_info[i][j]["artist"] + "\n"
+                    "URL: " + song_info[i][j]["url"] + "\n"
+                ))
         Song.objects.bulk_create(create_list)
 
         # userのstopカラムがFalseだったら返信をする
