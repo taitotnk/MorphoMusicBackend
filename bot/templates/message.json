@@ -4,7 +4,7 @@
     "type": "image",
     "url": "{{ artwork }}",
     "size": "full",
-    "aspectRatio": "20:13",
+    "aspectRatio": "1:1",
     "aspectMode": "cover"
   },
   "body": {
