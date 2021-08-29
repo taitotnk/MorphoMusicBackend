@@ -45,11 +45,11 @@ def callback(request):
         return HttpResponseForbidden()
     return HttpResponse('OK', status=200)
 
-# メッセージイベント処理
-
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_song_message(event):
+    """メッセージイベント処理"""
+
     # 送信されたメッセージ
     text = event.message.text
     # 送信したユーザーのuserId
@@ -167,8 +167,6 @@ def handle_song_message(event):
         # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
         create_list = []
         msg_array = []
-        print(f"type:{type(song_info)}")
-        print(f"song_info:{(song_info)}")
         for i in range(len(song_info)):
             for j in range(len(song_info[i])):
                 song_name = song_info[i][j].get("title")
@@ -186,7 +184,6 @@ def handle_song_message(event):
                     "message.json", {"artwork": artwork_url,
                                      "title": song_name, "artist": artist_name, "url": buy_url}
                 )
-                print(msg)
                 msg_array.append(FlexSendMessage(
                     alt_text=f"曲名：{song_name}",
                     contents=json.loads(msg)
@@ -215,10 +212,10 @@ GCP_URL = "https://language.googleapis.com/v1/documents:analyzeSyntax?key=" + GC
 SPOTIFY_CLIENT_ID = settings.SPOTIFY_CLIENT_ID
 SPOTIFY_CLIENT_SECRET = settings.SPOTIFY_CLIENT_SECRET
 
-# 送信されたメッセージを形態素解析して単語のリストを返す関数
-
 
 def morpho_analysis(text):
+    """送信されたメッセージを形態素解析して単語のリストを返す関数"""
+
     header = {'Content-Type': 'application/json'}
     body = {
         "document": {
@@ -253,10 +250,10 @@ def morpho_analysis(text):
     return word_list
 
 
-# 曲のjsonデータを使いやすいようにパースする関数
 def song_parser(json_data):
-    lst_ret = []
+    """曲のjsonデータを使いやすいようにパースする関数"""
 
+    lst_ret = []
     for track in json_data['tracks']['items']:
         d_ret = {
             "title": track['name'],
