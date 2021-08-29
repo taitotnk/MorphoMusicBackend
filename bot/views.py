@@ -7,7 +7,6 @@ import re
 import json
 import requests
 import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
 from api.models import Song, Lineuser
 from linebot import (
     LineBotApi, WebhookHandler
