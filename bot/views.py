@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
+import urllib
+import re
 import json
 import requests
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-import urllib
-import re
-from django.views.decorators.csrf import csrf_exempt
 from api.models import Song, Lineuser
 from linebot import (
     LineBotApi, WebhookHandler
@@ -15,7 +16,7 @@ from linebot.exceptions import (
     InvalidSignatureError, LineBotApiError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, StickerSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, StickerSendMessage, FlexSendMessage
 )
 
 
@@ -168,17 +169,24 @@ def handle_song_message(event):
         msg_array = []
         for i in range(len(song_info)):
             for j in range(len(song_info[i])):
+                song_name = song_info[i][j]["title"],
+                artist_name = song_info[i][j]["artist"],
+                buy_url = song_info[i][j]["url"],
+                artwork_url = song_info[i][j]["artwork"]
                 create_list.append(Song(
                     line_user=user_data,
-                    song_name=song_info[i][j]["title"],
-                    artist_name=song_info[i][j]["artist"],
-                    buy_url=song_info[i][j]["url"],
-                    artwork_url=song_info[i][j]["artwork"]
+                    song_name=song_name,
+                    artist_name=artist_name,
+                    buy_url=buy_url,
+                    artwork_url=artwork_url
                 ))
-                msg_array.append(TextSendMessage(
-                    text="曲名: " + song_info[i][j]["title"] + "\n"
-                    "アーティスト名: " + song_info[i][j]["artist"] + "\n"
-                    "URL: " + song_info[i][j]["url"] + "\n"
+                msg = render_to_string(
+                    "message.json", {"artwork": artwork_url,
+                                     "title": song_name, "artist": artist_name, "url": buy_url}
+                )
+                msg_array.append(FlexSendMessage(
+                    alt_text=f"曲名：{song_name}",
+                    contents=json.loads(msg)
                 ))
         Song.objects.bulk_create(create_list)
 
@@ -186,8 +194,7 @@ def handle_song_message(event):
         if user_data.stop is False:
             # 検索結果を返信
             try:
-                line_bot_api.reply_message(
-                    event.reply_token, msg_array)
+                line_bot_api.reply_message(event.reply_token, msg_array)
             except LineBotApiError as e:
                 print(e)
                 line_bot_api.reply_message(

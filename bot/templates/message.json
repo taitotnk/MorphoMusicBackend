@@ -1,0 +1,48 @@
+{
+  "type": "bubble",
+  "hero": {
+    "type": "image",
+    "url": "{{ artwork }}",
+    "size": "full",
+    "aspectRatio": "20:13",
+    "aspectMode": "cover"
+  },
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "spacing": "sm",
+    "contents": [
+      {
+        "type": "text",
+        "text": "{{ title|safe }}",
+        "weight": "bold",
+        "size": "xl",
+        "align": "center",
+        "margin": "none",
+        "wrap": true
+      },
+      {
+        "type": "text",
+        "text": "{{ artist|safe }}",
+        "align": "center",
+        "wrap": true
+      }
+    ]
+  },
+  "footer": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "button",
+        "action": {
+          "type": "uri",
+          "label": "URL",
+          "uri": "{{ url|safe|urlencode:":/?=" }}"
+        },
+        "style": "primary",
+        "height": "sm"
+      }
+    ]
+  }
+}
