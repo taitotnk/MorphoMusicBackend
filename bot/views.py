@@ -171,10 +171,10 @@ def handle_song_message(event):
         print(f"song_info:{(song_info)}")
         for i in range(len(song_info)):
             for j in range(len(song_info[i])):
-                song_name = song_info[i][j]["title"],
-                artist_name = song_info[i][j]["artist"],
-                buy_url = song_info[i][j]["url"],
-                artwork_url = song_info[i][j]["artwork"]
+                song_name = song_info[i][j].get("title")
+                artist_name = song_info[i][j].get("artist")
+                buy_url = song_info[i][j].get("url")
+                artwork_url = song_info[i][j].get("artwork")
                 create_list.append(Song(
                     line_user=user_data,
                     song_name=song_name,
