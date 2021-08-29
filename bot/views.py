@@ -167,6 +167,8 @@ def handle_song_message(event):
         # ユーザーがDBに存在したらユーザーを関連付けて曲情報を格納し、存在しなかったら新規作成して曲情報追加
         create_list = []
         msg_array = []
+        print(f"type:{type(song_info)}")
+        print(f"song_info:{(song_info)}")
         for i in range(len(song_info)):
             for j in range(len(song_info[i])):
                 song_name = song_info[i][j]["title"],
@@ -184,6 +186,7 @@ def handle_song_message(event):
                     "message.json", {"artwork": artwork_url,
                                      "title": song_name, "artist": artist_name, "url": buy_url}
                 )
+                print(msg)
                 msg_array.append(FlexSendMessage(
                     alt_text=f"曲名：{song_name}",
                     contents=json.loads(msg)
