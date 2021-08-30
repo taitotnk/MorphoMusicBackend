@@ -40,7 +40,8 @@
           "label": "URL",
           "uri": "{{ url|safe|urlencode:":/?=" }}"
         },
-        "style": "#1DB954",
+        "style": "primary",
+        "color": "#1DB954",
         "height": "sm"
       }
     ]
