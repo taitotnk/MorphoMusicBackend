@@ -11,6 +11,7 @@
     "type": "box",
     "layout": "vertical",
     "spacing": "sm",
+    "backgroundColor": "#00000000"
     "contents": [
       {
         "type": "text",
